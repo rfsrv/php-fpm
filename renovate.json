@@ -1,0 +1,26 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^Dockerfile$"],
+      "matchStrings": [
+        "ARG\\s+PHPREDIS_VERSION=(?<currentValue>[^\\s]+)"
+      ],
+      "depNameTemplate": "phpredis/phpredis",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^Dockerfile$"],
+      "matchStrings": [
+        "ARG\\s+IMAGICK_VERSION=(?<currentValue>[^\\s]+)"
+      ],
+      "depNameTemplate": "Imagick/imagick",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    }
+  ]
+}
