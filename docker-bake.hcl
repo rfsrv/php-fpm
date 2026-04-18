@@ -18,8 +18,16 @@ variable "IMAGICK_VERSION" {
   default = "3.8.1"
 }
 
+variable "WPCLI_VERSION" {
+  default = "2.11.0"
+}
+
+variable "SUPERCRONIC_VERSION" {
+  default = "0.2.33"
+}
+
 group "default" {
-  targets = ["php83"]
+  targets = ["php83", "wordpress83"]
 }
 
 target "php83" {
@@ -36,5 +44,27 @@ target "php83" {
   ]
   cache-from = ["type=registry,ref=${REGISTRY}/${IMAGE_NAME}:cache-8.3"]
   cache-to   = ["type=registry,ref=${REGISTRY}/${IMAGE_NAME}:cache-8.3,mode=max"]
+  platforms  = ["linux/amd64", "linux/arm64"]
+}
+
+target "wordpress83" {
+  context    = "./wordpress"
+  dockerfile = "Dockerfile"
+  # Use the locally-built php83 target as the base image so CI doesn't need
+  # to push/pull the base before building this variant.
+  contexts = {
+    "ghcr.io/rfsrv/php-fpm:8.3" = "target:php83"
+  }
+  args = {
+    PHP_VERSION         = PHP_VERSION
+    WPCLI_VERSION       = WPCLI_VERSION
+    SUPERCRONIC_VERSION = SUPERCRONIC_VERSION
+  }
+  tags = [
+    "${REGISTRY}/php-wordpress:8.3",
+    "${REGISTRY}/php-wordpress:latest",
+  ]
+  cache-from = ["type=registry,ref=${REGISTRY}/php-wordpress:cache-8.3"]
+  cache-to   = ["type=registry,ref=${REGISTRY}/php-wordpress:cache-8.3,mode=max"]
   platforms  = ["linux/amd64", "linux/arm64"]
 }
