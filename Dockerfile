@@ -54,8 +54,8 @@ RUN set -eux; \
     rm -rf /tmp/pear ~/.pearrc
 
 COPY --from=composer-bin /usr/bin/composer /usr/local/bin/composer
-COPY php/conf.d/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
-COPY php/fpm-pool.conf /usr/local/etc/php-fpm.d/www.conf
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 WORKDIR /var/www/html
 EXPOSE 9000
@@ -63,5 +63,5 @@ EXPOSE 9000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 | grep -q "pong" || exit 1
 
-ENTRYPOINT ["docker-php-entrypoint"]
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php-fpm"]

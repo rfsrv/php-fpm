@@ -14,6 +14,16 @@ ARG PHP_VERSION=8.3
 
 FROM ${BASE_IMAGE}:${PHP_VERSION}
 
+# WordPress-appropriate PHP defaults. These feed into the base image's
+# docker-entrypoint.sh which generates php.ini and fpm-pool.conf at startup.
+# Override any of these in your deployment env / Doppler secrets as needed.
+ENV PHP_MEMORY_LIMIT=256M
+ENV PHP_MAX_EXECUTION_TIME=300
+ENV PHP_MAX_INPUT_TIME=300
+ENV PHP_MAX_INPUT_VARS=3000
+ENV PHP_UPLOAD_MAX_FILESIZE=64M
+ENV PHP_POST_MAX_SIZE=72M
+
 ARG WPCLI_VERSION=2.11.0
 ARG SUPERCRONIC_VERSION=0.2.33
 
@@ -34,7 +44,7 @@ RUN set -eux; \
     chmod +x /usr/local/bin/supercronic
 
 # WordPress-tuned PHP overrides (uploads, execution time, memory)
-COPY php/conf.d/wordpress.ini /usr/local/etc/php/conf.d/zz-wordpress.ini
+# are now handled via ENV defaults above — no static ini needed.
 
 # Crontab consumed by supercronic when used as the cron sidecar/job
 RUN mkdir -p /etc/supercronic
@@ -50,5 +60,4 @@ EXPOSE 9000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 | grep -q "pong" || exit 1
 
-ENTRYPOINT ["docker-php-entrypoint"]
-CMD ["php-fpm"]
+# Inherits ENTRYPOINT ["docker-entrypoint.sh"] and CMD ["php-fpm"] from base image.
