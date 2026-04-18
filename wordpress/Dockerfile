@@ -60,4 +60,7 @@ EXPOSE 9000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 | grep -q "pong" || exit 1
 
+# All root-requiring installs are done. Drop to www-data for runtime.
+USER www-data
+
 # Inherits ENTRYPOINT ["docker-entrypoint.sh"] and CMD ["php-fpm"] from base image.

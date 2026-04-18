@@ -55,7 +55,12 @@ RUN set -eux; \
 
 COPY --from=composer-bin /usr/bin/composer /usr/local/bin/composer
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh; \
+    touch /usr/local/etc/php/conf.d/zzz-env.ini \
+          /usr/local/etc/php-fpm.d/www.conf; \
+    chown www-data:www-data \
+          /usr/local/etc/php/conf.d/zzz-env.ini \
+          /usr/local/etc/php-fpm.d/www.conf
 
 WORKDIR /var/www/html
 EXPOSE 9000
