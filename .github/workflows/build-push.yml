@@ -6,8 +6,11 @@ on:
       - main
     paths:
       - "Dockerfile"
+      - "docker-entrypoint.sh"
       - "docker-bake.hcl"
       - "php/**"
+      - "wordpress/Dockerfile"
+      - "wordpress/docker-entrypoint.sh"
       - ".github/workflows/build-push.yml"
   schedule:
     - cron: "0 4 * * 1"
