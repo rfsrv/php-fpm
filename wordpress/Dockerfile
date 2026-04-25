@@ -54,6 +54,13 @@ COPY cron/crontab /etc/supercronic/crontab
 COPY scripts/wp-cron-run.sh /usr/local/bin/wp-cron-run
 RUN chmod +x /usr/local/bin/wp-cron-run
 
+# WordPress-specific entrypoint — wraps the base entrypoint with WP setup steps
+# (e.g. W3TC drop-in installation).  The base entrypoint is aliased so it can
+# still be called by the WordPress entrypoint.
+RUN cp /usr/local/bin/docker-entrypoint.sh /usr/local/bin/base-docker-entrypoint.sh
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 WORKDIR /var/www/html
 EXPOSE 9000
 
