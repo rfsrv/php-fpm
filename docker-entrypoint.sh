@@ -44,14 +44,16 @@ set -e
 : "${PHP_OPCACHE_FAST_SHUTDOWN:=1}"
 
 # ── FPM pool defaults ─────────────────────────────────────────────────────────
+# Sized for a 256Mi container limit (~50MB per WordPress child process).
+# Override per-app via PHP_PM_* env vars (e.g. in kluctl resources.fpm.env).
 : "${PHP_FPM_USER:=www-data}"
 : "${PHP_FPM_GROUP:=www-data}"
 : "${PHP_FPM_LISTEN:=0.0.0.0:9000}"
 : "${PHP_PM:=dynamic}"
-: "${PHP_PM_MAX_CHILDREN:=20}"
-: "${PHP_PM_START_SERVERS:=4}"
-: "${PHP_PM_MIN_SPARE_SERVERS:=2}"
-: "${PHP_PM_MAX_SPARE_SERVERS:=6}"
+: "${PHP_PM_MAX_CHILDREN:=5}"
+: "${PHP_PM_START_SERVERS:=2}"
+: "${PHP_PM_MIN_SPARE_SERVERS:=1}"
+: "${PHP_PM_MAX_SPARE_SERVERS:=3}"
 : "${PHP_PM_MAX_REQUESTS:=500}"
 : "${PHP_PM_PROCESS_IDLE_TIMEOUT:=10s}"
 
