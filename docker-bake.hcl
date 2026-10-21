@@ -33,6 +33,7 @@ group "default" {
 target "php83" {
   context    = "."
   dockerfile = "Dockerfile"
+  pull       = true
   args = {
     PHP_VERSION      = PHP_VERSION
     PHPREDIS_VERSION = PHPREDIS_VERSION
@@ -50,6 +51,7 @@ target "php83" {
 target "wordpress83" {
   context    = "./wordpress"
   dockerfile = "Dockerfile"
+  pull       = true
   # Use the locally-built php83 target as the base image so CI doesn't need
   # to push/pull the base before building this variant.
   contexts = {

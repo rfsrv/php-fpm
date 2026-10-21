@@ -5,6 +5,9 @@ FROM composer:${COMPOSER_VERSION} AS composer-bin
 
 FROM php:${PHP_VERSION}-fpm-alpine
 
+# CVE-2026-109618 and CVE-2026-109619: reject unpatched upstream images.
+RUN php -r 'if (version_compare(PHP_VERSION, "8.3.36", "<")) { fwrite(STDERR, "PHP 8.3.36 or newer is required\n"); exit(1); }'
+
 ARG PHPREDIS_VERSION=6.3.0
 ARG IMAGICK_VERSION=3.8.1
 

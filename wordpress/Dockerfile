@@ -14,6 +14,9 @@ ARG PHP_VERSION=8.3
 
 FROM ${BASE_IMAGE}:${PHP_VERSION}
 
+# Also protect standalone builds that consume the published php-fpm image.
+RUN php -r 'if (version_compare(PHP_VERSION, "8.3.36", "<")) { fwrite(STDERR, "PHP 8.3.36 or newer is required\n"); exit(1); }'
+
 # WordPress-appropriate PHP defaults. These feed into the base image's
 # docker-entrypoint.sh which generates php.ini and fpm-pool.conf at startup.
 # Override any of these in your deployment env / Doppler secrets as needed.
